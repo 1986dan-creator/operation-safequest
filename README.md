@@ -1,2 +1,2 @@
 # operation-safequest
-Interactive Games
+Nintendo-style educational arcade game
