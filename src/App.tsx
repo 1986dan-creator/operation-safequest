@@ -91,6 +91,10 @@ function App() {
     loadSavedNumber(["safequest-quiz-completions"], 0)
   );
 
+  const [quizBestScore, setQuizBestScore] = useState(() =>
+    loadSavedNumber(["safequest-quiz-best-score"], 0)
+  );
+
   const [scamCompletions, setScamCompletions] = useState(() =>
     loadSavedNumber(["safequest-scam-completions"], 0)
   );
@@ -105,9 +109,7 @@ function App() {
 
   const [unlockedShopAvatars, setUnlockedShopAvatars] = useState<string[]>(
     () => {
-      const savedAvatars = localStorage.getItem(
-        "safequest-shop-avatars"
-      );
+      const savedAvatars = localStorage.getItem("safequest-shop-avatars");
 
       if (!savedAvatars) {
         return [];
@@ -152,6 +154,8 @@ function App() {
   const [completedMission, setCompletedMission] = useState("");
   const [rewardXp, setRewardXp] = useState(0);
   const [rewardCoins, setRewardCoins] = useState(0);
+
+const [showNewBestMessage, setShowNewBestMessage] = useState(false);
 
   const savePlayer = () => {
     const cleanName = playerName.trim();
@@ -203,6 +207,11 @@ function App() {
       const newCoins = coins + earnedCoins;
       const newQuizCompletions = quizCompletions + 1;
 
+const isNewBestScore = earnedXp > quizBestScore;
+const newQuizBestScore = isNewBestScore
+  ? earnedXp
+  : quizBestScore;
+
       localStorage.setItem("safequest-xp", String(newXp));
       localStorage.setItem("safequest-coins", String(newCoins));
       localStorage.setItem(
@@ -210,10 +219,17 @@ function App() {
         String(newQuizCompletions)
       );
 
+localStorage.setItem(
+  "safequest-quiz-best-score",
+  String(newQuizBestScore)
+);
+
       setXp(newXp);
       setCoins(newCoins);
       setQuizCompletions(newQuizCompletions);
-      setCompletedMission("Quiz Rush");
+setQuizBestScore(newQuizBestScore);
+setShowNewBestMessage(isNewBestScore);
+setCompletedMission("Quiz Rush");
       setRewardXp(earnedXp);
       setRewardCoins(earnedCoins);
       setQuestionIndex(0);
@@ -463,8 +479,9 @@ function App() {
       "xp",
       "safequest-coins",
       "coins",
-      "safequest-quiz-completions",
-      "safequest-scam-completions",
+"safequest-quiz-completions",
+"safequest-quiz-best-score",
+"safequest-scam-completions",
       "safequest-password-completions",
       "safequest-hero-completions",
       "safequest-shop-avatars",
@@ -476,129 +493,135 @@ function App() {
     setSelectedAvatar("🛡️");
     setXp(450);
     setCoins(0);
-    setQuizCompletions(0);
-    setScamCompletions(0);
+setQuizCompletions(0);
+setQuizBestScore(0);
+setScamCompletions(0);
     setPasswordCompletions(0);
     setHeroCompletions(0);
     setUnlockedShopAvatars([]);
     setCompletedMission("");
     setRewardXp(0);
-    setRewardCoins(0);
-    setScreen("setup");
+setRewardCoins(0);
+setShowNewBestMessage(false);
+setScreen("setup");
   };
 
   const availableAvatars = [...avatars, ...unlockedShopAvatars];
 
-if (screen === "home") {
-  return (
-    <HomeScreen
-      hasPlayer={Boolean(playerName)}
-      onStart={() => setScreen(playerName ? "lobby" : "setup")}
-      onOpenGuide={() => setScreen("guide")}
-    />
-  );
-}
+  if (screen === "home") {
+    return (
+      <HomeScreen
+        hasPlayer={Boolean(playerName)}
+        onStart={() => setScreen(playerName ? "lobby" : "setup")}
+        onOpenGuide={() => setScreen("guide")}
+      />
+    );
+  }
 
-if (screen === "guide") {
-  return <HowToPlayScreen onBack={() => setScreen("home")} />;
-}
+  if (screen === "guide") {
+    return <HowToPlayScreen onBack={() => setScreen("home")} />;
+  }
 
-if (screen === "setup") {
-  return (
-    <PlayerSetupScreen
-      playerName={playerName}
-      selectedAvatar={selectedAvatar}
-      availableAvatars={availableAvatars}
-      isEditing={Boolean(playerName)}
-      onNameChange={(name) => setPlayerName(name)}
-      onAvatarChange={(avatar) => setSelectedAvatar(avatar)}
-      onSave={savePlayer}
-    />
-  );
-}
+  if (screen === "setup") {
+    return (
+      <PlayerSetupScreen
+        playerName={playerName}
+        selectedAvatar={selectedAvatar}
+        availableAvatars={availableAvatars}
+        isEditing={Boolean(playerName)}
+        onNameChange={(name) => setPlayerName(name)}
+        onAvatarChange={(avatar) => setSelectedAvatar(avatar)}
+        onSave={savePlayer}
+      />
+    );
+  }
 
   if (screen === "shop") {
-  return (
-    <ShopScreen
-      coins={coins}
-      items={shopItems}
-      unlockedAvatars={unlockedShopAvatars}
-      onBuy={buyAvatar}
-      onBack={() => setScreen("lobby")}
-    />
-  );
-}
+    return (
+      <ShopScreen
+        coins={coins}
+        items={shopItems}
+        unlockedAvatars={unlockedShopAvatars}
+        onBuy={buyAvatar}
+        onBack={() => setScreen("lobby")}
+      />
+    );
+  }
 
   if (screen === "results") {
-  return (
-    <ResultsScreen
-      completedMission={completedMission}
-      rewardXp={rewardXp}
-      rewardCoins={rewardCoins}
-      onReturnToLobby={() => setScreen("lobby")}
-    />
-  );
-}
+    return (
+<ResultsScreen
+  completedMission={completedMission}
+  rewardXp={rewardXp}
+  rewardCoins={rewardCoins}
+  showNewBestMessage={showNewBestMessage}
+  onReturnToLobby={() => {
+    setShowNewBestMessage(false);
+    setScreen("lobby");
+  }}
+/>
+    );
+  }
 
   if (screen === "hero") {
-  return (
-    <HeroMissionScreen
-      challenge={heroChallenges[heroIndex]}
-      challengeNumber={heroIndex + 1}
-      totalChallenges={heroChallenges.length}
-      score={heroScore}
-      selectedAnswer={selectedHeroAnswer}
-      hasAnswered={hasHeroAnswered}
-      onChooseAnswer={chooseHeroAnswer}
-      onNext={nextHeroChallenge}
-    />
-  );
-}
+    return (
+      <HeroMissionScreen
+        challenge={heroChallenges[heroIndex]}
+        challengeNumber={heroIndex + 1}
+        totalChallenges={heroChallenges.length}
+        score={heroScore}
+        selectedAnswer={selectedHeroAnswer}
+        hasAnswered={hasHeroAnswered}
+        onChooseAnswer={chooseHeroAnswer}
+        onNext={nextHeroChallenge}
+      />
+    );
+  }
 
   if (screen === "password") {
-  return (
-    <PasswordProtectorScreen
-      challenge={passwordChallenges[passwordIndex]}
-      challengeNumber={passwordIndex + 1}
-      totalChallenges={passwordChallenges.length}
-      score={passwordScore}
-      selectedChoice={selectedPasswordChoice}
-      hasAnswered={hasPasswordAnswered}
-      onChooseAnswer={choosePasswordAnswer}
-      onNext={nextPasswordChallenge}
-    />
-  );
-}
+    return (
+      <PasswordProtectorScreen
+        challenge={passwordChallenges[passwordIndex]}
+        challengeNumber={passwordIndex + 1}
+        totalChallenges={passwordChallenges.length}
+        score={passwordScore}
+        selectedChoice={selectedPasswordChoice}
+        hasAnswered={hasPasswordAnswered}
+        onChooseAnswer={choosePasswordAnswer}
+        onNext={nextPasswordChallenge}
+      />
+    );
+  }
 
   if (screen === "scam") {
-  return (
-    <ScamHunterScreen
-      message={scamMessages[scamIndex]}
-      messageNumber={scamIndex + 1}
-      totalMessages={scamMessages.length}
-      score={scamScore}
-      selectedChoice={selectedScamChoice}
-      hasAnswered={hasScamAnswered}
-      onChooseAnswer={chooseScamAnswer}
-      onNext={nextScamMessage}
-    />
-  );
-}
+    return (
+      <ScamHunterScreen
+        message={scamMessages[scamIndex]}
+        messageNumber={scamIndex + 1}
+        totalMessages={scamMessages.length}
+        score={scamScore}
+        selectedChoice={selectedScamChoice}
+        hasAnswered={hasScamAnswered}
+        onChooseAnswer={chooseScamAnswer}
+        onNext={nextScamMessage}
+      />
+    );
+  }
 
   if (screen === "quiz") {
-  return (
-    <QuizScreen
-      question={quizQuestions[questionIndex]}
-      questionNumber={questionIndex + 1}
-      totalQuestions={quizQuestions.length}
-      score={score}
-      selectedAnswer={selectedAnswer}
-      hasAnswered={hasAnswered}
-      onChooseAnswer={chooseAnswer}
-      onNext={nextQuestion}
-    />
-  );
-}
+    return (
+      <QuizScreen
+        question={quizQuestions[questionIndex]}
+        questionNumber={questionIndex + 1}
+        totalQuestions={quizQuestions.length}
+        score={score}
+        selectedAnswer={selectedAnswer}
+        hasAnswered={hasAnswered}
+        onChooseAnswer={chooseAnswer}
+        onNext={nextQuestion}
+      />
+    );
+  }
 
   let currentRankIndex = 0;
 
@@ -665,30 +688,31 @@ if (screen === "setup") {
     },
   ];
 
- return (
-  <ArcadeLobby
-    playerName={playerName}
-    selectedAvatar={selectedAvatar}
-    currentRank={currentRank}
-    nextRank={nextRank}
-    ranks={ranks}
-    xp={xp}
-    coins={coins}
-    xpProgress={xpProgress}
-    totalMissions={totalMissions}
-    achievements={achievements}
-    scamHunterUnlocked={scamHunterUnlocked}
-    passwordProtectorUnlocked={passwordProtectorUnlocked}
-    heroMissionUnlocked={heroMissionUnlocked}
-    onEditProfile={() => setScreen("setup")}
-    onOpenShop={startShop}
-    onReset={resetProgress}
-    onStartQuiz={startQuiz}
-    onStartScamHunter={startScamHunter}
-    onStartPasswordProtector={startPasswordProtector}
-    onStartHeroMission={startHeroMission}
-  />
-);
+  return (
+    <ArcadeLobby
+      playerName={playerName}
+      selectedAvatar={selectedAvatar}
+      currentRank={currentRank}
+      nextRank={nextRank}
+      ranks={ranks}
+      xp={xp}
+      coins={coins}
+      xpProgress={xpProgress}
+      totalMissions={totalMissions}
+quizBestScore={quizBestScore}
+achievements={achievements}
+      scamHunterUnlocked={scamHunterUnlocked}
+      passwordProtectorUnlocked={passwordProtectorUnlocked}
+      heroMissionUnlocked={heroMissionUnlocked}
+      onEditProfile={() => setScreen("setup")}
+      onOpenShop={startShop}
+      onReset={resetProgress}
+      onStartQuiz={startQuiz}
+      onStartScamHunter={startScamHunter}
+      onStartPasswordProtector={startPasswordProtector}
+      onStartHeroMission={startHeroMission}
+    />
+  );
 }
 
 export default App;

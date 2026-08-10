@@ -288,6 +288,13 @@
   line-height: 1.5;
 }
 
+.results-card > p.new-best-message {
+  margin: 20px 0 0;
+  color: #ffd43b;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
 .reward-list {
   display: grid;
   grid-template-columns: 1fr 1fr;

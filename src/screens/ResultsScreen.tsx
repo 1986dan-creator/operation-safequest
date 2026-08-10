@@ -1,15 +1,17 @@
 type ResultsScreenProps = {
   completedMission: string;
   rewardXp: number;
-  rewardCoins: number;
-  onReturnToLobby: () => void;
+rewardCoins: number;
+showNewBestMessage: boolean;
+onReturnToLobby: () => void;
 };
 
 export function ResultsScreen({
   completedMission,
   rewardXp,
-  rewardCoins,
-  onReturnToLobby,
+rewardCoins,
+showNewBestMessage,
+onReturnToLobby,
 }: ResultsScreenProps) {
   return (
     <main className="results-screen">
@@ -19,6 +21,12 @@ export function ResultsScreen({
 
         <h1>{completedMission}</h1>
         <p>You completed the mission and protected your digital world.</p>
+
+{showNewBestMessage && (
+  <p className="new-best-message">
+    🌟 NEW BEST QUIZ RUSH SCORE!
+  </p>
+)}
 
         <div className="reward-list">
           <div className="reward-item">

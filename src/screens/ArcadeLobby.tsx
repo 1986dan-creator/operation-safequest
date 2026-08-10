@@ -20,8 +20,9 @@ type ArcadeLobbyProps = {
   xp: number;
   coins: number;
   xpProgress: number;
-  totalMissions: number;
-  achievements: Achievement[];
+totalMissions: number;
+quizBestScore: number;
+achievements: Achievement[];
   scamHunterUnlocked: boolean;
   passwordProtectorUnlocked: boolean;
   heroMissionUnlocked: boolean;
@@ -43,8 +44,9 @@ export function ArcadeLobby({
   xp,
   coins,
   xpProgress,
-  totalMissions,
-  achievements,
+totalMissions,
+quizBestScore,
+achievements,
   scamHunterUnlocked,
   passwordProtectorUnlocked,
   heroMissionUnlocked,
@@ -168,6 +170,7 @@ export function ArcadeLobby({
             <p className="game-status">UNLOCKED</p>
             <h3>Quiz Rush</h3>
             <p>Test your online-safety knowledge against the clock.</p>
+            <p>🏅 Best score: {quizBestScore} XP</p>
             <span className="play-button">▶ PLAY</span>
           </button>
 
