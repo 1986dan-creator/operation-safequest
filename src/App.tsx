@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 
 import {
@@ -7,6 +7,7 @@ import {
   passwordChallenges,
   quizQuestions,
   ranks,
+  safetyTips,
   scamMessages,
   shopItems,
 } from "./gameData";
@@ -129,6 +130,24 @@ function App() {
   const [score, setScore] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [hasAnswered, setHasAnswered] = useState(false);
+const [timeLeft, setTimeLeft] = useState(20);
+
+useEffect(() => {
+  if (screen !== "quiz" || hasAnswered) {
+    return;
+  }
+
+  if (timeLeft === 0) {
+    setHasAnswered(true);
+    return;
+  }
+
+  const timer = window.setTimeout(() => {
+    setTimeLeft((currentTime) => currentTime - 1);
+  }, 1000);
+
+  return () => window.clearTimeout(timer);
+}, [screen, timeLeft, hasAnswered]);
 
   const [scamIndex, setScamIndex] = useState(0);
   const [scamScore, setScamScore] = useState(0);
@@ -155,6 +174,10 @@ function App() {
   const [rewardXp, setRewardXp] = useState(0);
   const [rewardCoins, setRewardCoins] = useState(0);
 
+const [safetyTip, setSafetyTip] = useState(
+  () => safetyTips[Math.floor(Math.random() * safetyTips.length)]
+);
+
 const [showNewBestMessage, setShowNewBestMessage] = useState(false);
 
   const savePlayer = () => {
@@ -178,8 +201,9 @@ const [showNewBestMessage, setShowNewBestMessage] = useState(false);
     setQuestionIndex(0);
     setScore(0);
     setSelectedAnswer(null);
-    setHasAnswered(false);
-    setScreen("quiz");
+setHasAnswered(false);
+setTimeLeft(20);
+setScreen("quiz");
   };
 
   const chooseAnswer = (answerIndex: number) => {
@@ -241,9 +265,10 @@ setCompletedMission("Quiz Rush");
       return;
     }
 
-    setQuestionIndex((currentIndex) => currentIndex + 1);
-    setSelectedAnswer(null);
-    setHasAnswered(false);
+setQuestionIndex((currentIndex) => currentIndex + 1);
+setSelectedAnswer(null);
+setHasAnswered(false);
+setTimeLeft(20);
   };
 
   const startScamHunter = () => {
@@ -373,6 +398,32 @@ setCompletedMission("Quiz Rush");
     setHasHeroAnswered(false);
     setScreen("hero");
   };
+
+const playAgain = () => {
+  setShowNewBestMessage(false);
+
+  if (completedMission === "Quiz Rush") {
+    startQuiz();
+    return;
+  }
+
+  if (completedMission === "Scam Hunter") {
+    startScamHunter();
+    return;
+  }
+
+  if (completedMission === "Password Protector") {
+    startPasswordProtector();
+    return;
+  }
+
+  if (completedMission === "Digital Defender") {
+    startHeroMission();
+    return;
+  }
+
+  setScreen("lobby");
+};
 
   const chooseHeroAnswer = (answerIndex: number) => {
     if (hasHeroAnswered) return;
@@ -553,9 +604,16 @@ setScreen("setup");
 <ResultsScreen
   completedMission={completedMission}
   rewardXp={rewardXp}
-  rewardCoins={rewardCoins}
-  showNewBestMessage={showNewBestMessage}
-  onReturnToLobby={() => {
+rewardCoins={rewardCoins}
+correctAnswers={
+  completedMission === "Quiz Rush" ? rewardXp / 50 : undefined
+}
+totalQuestions={
+  completedMission === "Quiz Rush" ? quizQuestions.length : undefined
+}
+showNewBestMessage={showNewBestMessage}
+onPlayAgain={playAgain}
+onReturnToLobby={() => {
     setShowNewBestMessage(false);
     setScreen("lobby");
   }}
@@ -614,8 +672,10 @@ setScreen("setup");
         question={quizQuestions[questionIndex]}
         questionNumber={questionIndex + 1}
         totalQuestions={quizQuestions.length}
-        score={score}
-        selectedAnswer={selectedAnswer}
+score={score}
+timeLeft={timeLeft}
+timeUp={timeLeft === 0}
+selectedAnswer={selectedAnswer}
         hasAnswered={hasAnswered}
         onChooseAnswer={chooseAnswer}
         onNext={nextQuestion}
@@ -695,9 +755,10 @@ setScreen("setup");
       currentRank={currentRank}
       nextRank={nextRank}
       ranks={ranks}
-      xp={xp}
-      coins={coins}
-      xpProgress={xpProgress}
+xp={xp}
+coins={coins}
+safetyTip={safetyTip}
+xpProgress={xpProgress}
       totalMissions={totalMissions}
 quizBestScore={quizBestScore}
 achievements={achievements}

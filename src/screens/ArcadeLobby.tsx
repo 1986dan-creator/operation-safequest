@@ -19,10 +19,11 @@ type ArcadeLobbyProps = {
   ranks: Rank[];
   xp: number;
   coins: number;
+  safetyTip: string;
   xpProgress: number;
-totalMissions: number;
-quizBestScore: number;
-achievements: Achievement[];
+  totalMissions: number;
+  quizBestScore: number;
+  achievements: Achievement[];
   scamHunterUnlocked: boolean;
   passwordProtectorUnlocked: boolean;
   heroMissionUnlocked: boolean;
@@ -43,10 +44,11 @@ export function ArcadeLobby({
   ranks,
   xp,
   coins,
+  safetyTip,
   xpProgress,
-totalMissions,
-quizBestScore,
-achievements,
+  totalMissions,
+  quizBestScore,
+  achievements,
   scamHunterUnlocked,
   passwordProtectorUnlocked,
   heroMissionUnlocked,
@@ -87,13 +89,20 @@ achievements,
       <section className="player-stats-panel">
         <p>🎮 Missions completed: {totalMissions}</p>
 
-        <button className="shop-button" onClick={onOpenShop}>
-          🛍️ AVATAR SHOP
-        </button>
+        <div className="lobby-actions">
+          <button className="shop-button" onClick={onOpenShop}>
+            🛍️ AVATAR SHOP
+          </button>
 
-        <button className="reset-button" onClick={onReset}>
-          ↻ RESET PROGRESS
-        </button>
+          <button className="reset-button" onClick={onReset}>
+            ↻ RESET PROGRESS
+          </button>
+        </div>
+      </section>
+
+      <section className="safety-tip-panel">
+        <p className="section-label">SAFETY TIP</p>
+        <p>💡 {safetyTip}</p>
       </section>
 
       <section className="xp-panel">

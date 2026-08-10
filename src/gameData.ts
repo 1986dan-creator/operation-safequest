@@ -24,11 +24,15 @@ export const quizQuestions = [
       "Reply with your address",
     ],
     correctAnswer: 2,
+    explanation:
+      "Passwords are private. Tell a trusted adult if a stranger asks for one.",
   },
   {
     question: "Which password is safest?",
     answers: ["123456", "password", "MyDog!Runs7Fast", "yourname"],
     correctAnswer: 2,
+    explanation:
+      "Long passwords with a mix of words, numbers, and symbols are much harder to guess.",
   },
   {
     question: "What is a scam?",
@@ -39,6 +43,21 @@ export const quizQuestions = [
       "A type of avatar",
     ],
     correctAnswer: 1,
+    explanation:
+      "Scams use tricks to steal information or money. Stop and check with someone you trust.",
+  },
+  {
+    question:
+      "A game account message asks you to click a link right away. What is the safest choice?",
+    answers: [
+      "Click quickly before the account is lost",
+      "Check with a trusted adult or the official game app first",
+      "Send the message your password",
+      "Share the link with your friends",
+    ],
+    correctAnswer: 1,
+    explanation:
+      "Urgent messages can be scams. Check through the official app or ask a trusted adult before clicking.",
   },
 ];
 
@@ -123,4 +142,12 @@ export const heroChallenges = [
     explanation:
       "Public Wi-Fi can be risky. Avoid sharing sensitive information on an untrusted network.",
   },
+];
+
+export const safetyTips = [
+  "Never share your password, even with someone who says they need it urgently.",
+  "Pause before clicking a link in an unexpected message.",
+  "Use long, unique passwords with words, numbers, and symbols.",
+  "Check with a trusted adult if an online message makes you worried or unsure.",
+  "Keep personal details, such as your address and school, private online.",
 ];

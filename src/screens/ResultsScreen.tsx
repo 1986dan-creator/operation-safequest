@@ -2,7 +2,10 @@ type ResultsScreenProps = {
   completedMission: string;
   rewardXp: number;
 rewardCoins: number;
+correctAnswers?: number;
+totalQuestions?: number;
 showNewBestMessage: boolean;
+onPlayAgain: () => void;
 onReturnToLobby: () => void;
 };
 
@@ -10,7 +13,10 @@ export function ResultsScreen({
   completedMission,
   rewardXp,
 rewardCoins,
+correctAnswers,
+totalQuestions,
 showNewBestMessage,
+onPlayAgain,
 onReturnToLobby,
 }: ResultsScreenProps) {
   return (
@@ -28,6 +34,12 @@ onReturnToLobby,
   </p>
 )}
 
+{correctAnswers !== undefined && totalQuestions !== undefined && (
+  <p className="quiz-summary">
+    🎯 You got {correctAnswers} out of {totalQuestions} correct.
+  </p>
+)}
+
         <div className="reward-list">
           <div className="reward-item">
             <span>⚡</span>
@@ -40,9 +52,13 @@ onReturnToLobby,
           </div>
         </div>
 
-        <button className="next-button" onClick={onReturnToLobby}>
-          RETURN TO ARCADE ▶
-        </button>
+<button className="next-button" onClick={onPlayAgain}>
+  ↻ PLAY AGAIN
+</button>
+
+<button className="next-button" onClick={onReturnToLobby}>
+  RETURN TO ARCADE ▶
+</button>
       </section>
     </main>
   );
