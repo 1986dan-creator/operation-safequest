@@ -12,6 +12,7 @@ import {
 } from "./gameData";
 
 import { HomeScreen } from "./screens/HomeScreen";
+import { HowToPlayScreen } from "./screens/HowToPlayScreen";
 import { PlayerSetupScreen } from "./screens/PlayerSetupScreen";
 import { ResultsScreen } from "./screens/ResultsScreen";
 import { ShopScreen } from "./screens/ShopScreen";
@@ -23,6 +24,7 @@ import { ArcadeLobby } from "./screens/ArcadeLobby";
 
 type Screen =
   | "home"
+  | "guide"
   | "setup"
   | "lobby"
   | "quiz"
@@ -492,8 +494,13 @@ if (screen === "home") {
     <HomeScreen
       hasPlayer={Boolean(playerName)}
       onStart={() => setScreen(playerName ? "lobby" : "setup")}
+      onOpenGuide={() => setScreen("guide")}
     />
   );
+}
+
+if (screen === "guide") {
+  return <HowToPlayScreen onBack={() => setScreen("home")} />;
 }
 
 if (screen === "setup") {

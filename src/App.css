@@ -113,6 +113,7 @@
   line-height: 1.5;
 }
 
+
 .setup-card {
   width: min(520px, 100%);
   padding: 32px;
@@ -684,4 +685,83 @@
   background: #16152b;
   line-height: 1.6;
   font-size: 1.05rem;
+}
+
+.home-guide-button {
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px;
+  cursor: pointer;
+  border: 1px solid #a5b4fc;
+  border-radius: 12px;
+  color: #dbe4ff;
+  background: transparent;
+  font: inherit;
+  font-weight: 900;
+}
+
+.home-guide-button:hover {
+  color: #081426;
+  background: #a5b4fc;
+}
+
+.guide-screen {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  color: white;
+  background:
+    radial-gradient(circle at top, #385c9e, transparent 45%),
+    #10172e;
+}
+
+.guide-card {
+  width: min(700px, 100%);
+  padding: 32px;
+  border: 2px solid #a5b4fc;
+  border-radius: 24px;
+  background: #18264d;
+}
+
+.guide-card h1 {
+  margin: 8px 0 24px;
+}
+
+.guide-steps {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.guide-step {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 16px;
+  border-radius: 14px;
+  background: #101a36;
+}
+
+.guide-step > span {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 50%;
+  color: #081426;
+  background: #a5b4fc;
+  font-weight: 900;
+}
+
+.guide-step h2,
+.guide-step p {
+  margin: 0;
+}
+
+.guide-step p {
+  margin-top: 5px;
+  color: #c7d2fe;
+  line-height: 1.45;
 }

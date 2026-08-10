@@ -1,11 +1,13 @@
 type HomeScreenProps = {
   hasPlayer: boolean;
   onStart: () => void;
+  onOpenGuide: () => void;
 };
 
 export function HomeScreen({
   hasPlayer,
   onStart,
+  onOpenGuide,
 }: HomeScreenProps) {
   return (
     <main className="home-screen">
@@ -15,6 +17,10 @@ export function HomeScreen({
 
       <button className="next-button" onClick={onStart}>
         {hasPlayer ? "ENTER ARCADE ▶" : "PRESS START ▶"}
+      </button>
+
+      <button className="home-guide-button" onClick={onOpenGuide}>
+        📘 HOW TO PLAY
       </button>
     </main>
   );
