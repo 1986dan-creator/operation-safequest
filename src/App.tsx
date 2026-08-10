@@ -3,12 +3,12 @@ import "./App.css";
 
 import {
   avatars,
-  heroChallenges,
-  passwordChallenges,
-  quizQuestions,
+  heroChallenges as defaultHeroChallenges,
+  passwordChallenges as defaultPasswordChallenges,
+  quizQuestions as defaultQuizQuestions,
   ranks,
-  safetyTips,
-  scamMessages,
+  safetyTips as defaultSafetyTips,
+  scamMessages as defaultScamMessages,
   shopItems,
 } from "./gameData";
 
@@ -34,6 +34,52 @@ type Screen =
   | "hero"
   | "shop"
   | "results";
+
+type QuizQuestion = {
+  question: string;
+  answers: string[];
+  correctAnswer: number;
+  explanation: string;
+};
+
+type ScamMessage = {
+  sender: string;
+  message: string;
+  isScam: boolean;
+  explanation: string;
+};
+
+type PasswordChallenge = {
+  password: string;
+  isStrong: boolean;
+  explanation: string;
+};
+
+type HeroChallenge = {
+  scenario: string;
+  answers: string[];
+  correctAnswer: number;
+  explanation: string;
+};
+
+type SafeQuestContent = {
+  quizQuestions: QuizQuestion[];
+  scamMessages: ScamMessage[];
+  passwordChallenges: PasswordChallenge[];
+  heroChallenges: HeroChallenge[];
+  safetyTips: string[];
+};
+
+const contentFeedUrl =
+  "https://script.google.com/macros/s/AKfycbw52nv33_bXOL4Zq0MjNdUJe3DaOfy5sn208wjks9DfvwGC6xavjFldk6VVTzEHDgku3A/exec";
+
+function useRemoteContent<T>(content: unknown, fallback: T[]) {
+  return Array.isArray(content) && content.length > 0 ? (content as T[]) : fallback;
+}
+
+function pickSafetyTip(tips: string[]) {
+  return tips[Math.floor(Math.random() * tips.length)] || defaultSafetyTips[0];
+}
 
 function loadSavedText(keys: string[], fallback = "") {
   for (const key of keys) {
@@ -65,6 +111,74 @@ function loadSavedNumber(keys: string[], fallback: number) {
 
 function App() {
   const [screen, setScreen] = useState<Screen>("home");
+
+  const [content, setContent] = useState<SafeQuestContent>(() => ({
+    quizQuestions: defaultQuizQuestions,
+    scamMessages: defaultScamMessages,
+    passwordChallenges: defaultPasswordChallenges,
+    heroChallenges: defaultHeroChallenges,
+    safetyTips: defaultSafetyTips,
+  }));
+
+  const [safetyTip, setSafetyTip] = useState(() =>
+    pickSafetyTip(defaultSafetyTips)
+  );
+
+  useEffect(() => {
+    let isCurrent = true;
+
+    fetch(contentFeedUrl)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("SafeQuest content could not be loaded.");
+        }
+
+        return response.json() as Promise<Partial<SafeQuestContent>>;
+      })
+      .then((remoteContent) => {
+        if (!isCurrent) return;
+
+        const nextContent = {
+          quizQuestions: useRemoteContent(
+            remoteContent.quizQuestions,
+            defaultQuizQuestions
+          ),
+          scamMessages: useRemoteContent(
+            remoteContent.scamMessages,
+            defaultScamMessages
+          ),
+          passwordChallenges: useRemoteContent(
+            remoteContent.passwordChallenges,
+            defaultPasswordChallenges
+          ),
+          heroChallenges: useRemoteContent(
+            remoteContent.heroChallenges,
+            defaultHeroChallenges
+          ),
+          safetyTips: useRemoteContent(
+            remoteContent.safetyTips,
+            defaultSafetyTips
+          ),
+        };
+
+        setContent(nextContent);
+        setSafetyTip(pickSafetyTip(nextContent.safetyTips));
+      })
+      .catch(() => {
+        // The built-in questions keep the game playable offline.
+      });
+
+    return () => {
+      isCurrent = false;
+    };
+  }, []);
+
+  const {
+    quizQuestions,
+    scamMessages,
+    passwordChallenges,
+    heroChallenges,
+  } = content;
 
   const [playerName, setPlayerName] = useState(() =>
     loadSavedText(
@@ -173,10 +287,6 @@ useEffect(() => {
   const [completedMission, setCompletedMission] = useState("");
   const [rewardXp, setRewardXp] = useState(0);
   const [rewardCoins, setRewardCoins] = useState(0);
-
-const [safetyTip] = useState(
-  () => safetyTips[Math.floor(Math.random() * safetyTips.length)]
-);
 
 const [showNewBestMessage, setShowNewBestMessage] = useState(false);
 
