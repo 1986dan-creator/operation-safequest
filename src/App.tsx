@@ -174,7 +174,7 @@ useEffect(() => {
   const [rewardXp, setRewardXp] = useState(0);
   const [rewardCoins, setRewardCoins] = useState(0);
 
-const [safetyTip, setSafetyTip] = useState(
+const [safetyTip] = useState(
   () => safetyTips[Math.floor(Math.random() * safetyTips.length)]
 );
 
